@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aura - AI Medical Receptionist Voice Agent</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- CSS stylesheet -->
+    <link rel="stylesheet" href="/static/index.css">
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <div class="background-glows">
+        <div class="glow glow-1"></div>
+        <div class="glow glow-2"></div>
+        <div class="glow glow-3"></div>
+    </div>
+
+    <div class="dashboard-container">
+        <!-- Top Navigation Bar -->
+        <header class="app-header">
+            <div class="header-logo">
+                <i data-lucide="activity" class="logo-icon text-primary"></i>
+                <div class="logo-text">
+                    <h1>Aura</h1>
+                    <span>CLINICAL INTEGRATION ENGINE</span>
+                </div>
+            </div>
+            
+            <div class="header-status">
+                <div class="status-indicator">
+                    <span class="pulse-dot green"></span>
+                    <span>System Online</span>
+                </div>
+                <div class="status-badge sec-badge">
+                    <i data-lucide="shield-check" class="badge-icon"></i>
+                    <span>GDPR Compliant</span>
+                </div>
+                <div class="status-badge sec-badge">
+                    <i data-lucide="file-check-2" class="badge-icon"></i>
+                    <span>NHS DTAC Certified</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Dashboard Layout -->
+        <main class="dashboard-grid">
+            
+            <!-- Left Column: CRM Patient Booking Ledger -->
+            <section class="panel glass-panel crm-panel">
+                <div class="panel-header">
+                    <i data-lucide="calendar-days" class="panel-icon text-indigo"></i>
+                    <h2>GP Reception Ledger</h2>
+                </div>
+                
+                <div class="doctor-roster">
+                    <h3>On-Duty Practitioners</h3>
+                    <div class="doctor-list" id="doctor-list">
+                        <div class="doctor-card">
+                            <div class="doc-avatar bg-indigo">AT</div>
+                            <div class="doc-info">
+                                <h4>Dr. Alan Turing</h4>
+                                <p>Lead GP • Mon - Fri</p>
+                            </div>
+                            <span class="doc-status status-active">Available</span>
+                        </div>
+                        <div class="doctor-card">
+                            <div class="doc-avatar bg-blue">RJ</div>
+                            <div class="doc-info">
+                                <h4>Dr. Ryan Jenkins</h4>
+                                <p>Cardiologist • Mon/Wed/Fri</p>
+                            </div>
+                            <span class="doc-status status-active">Available</span>
+                        </div>
+                        <div class="doctor-card">
+                            <div class="doc-avatar bg-purple">SR</div>
+                            <div class="doc-info">
+                                <h4>Dr. Sonia Ryan</h4>
+                                <p>Pediatrician • Tue/Thu</p>
+                            </div>
+                            <span class="doc-status status-active">Available</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="appointment-ledger">
+                    <div class="ledger-header">
+                        <h3>Booked Appointments</h3>
+                        <button class="btn-text-only" id="reset-db-btn" title="Reset DB to Seed Data">
+                            <i data-lucide="rotate-ccw"></i> Reset
+                        </button>
+                    </div>
+                    <div class="ledger-list" id="appointments-list">
+                        <!-- Filled dynamically by JavaScript -->
+                        <div class="loading-placeholder">Loading clinical appointments...</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Center Column: Voice Agent Controller -->
+            <section class="panel main-panel glass-panel voice-panel">
+                <div class="panel-header text-center">
+                    <div class="agent-title">
+                        <i data-lucide="bot" class="text-primary"></i>
+                        <h2>EMMA Reception Assistant</h2>
+                    </div>
+                    <p class="panel-subtitle">Interactive AI Voice Agent Sandbox</p>
+                </div>
+
+                <!-- Voice Assistant Visualizer Orb -->
+                <div class="orb-container">
+                    <div class="voice-orb" id="voice-orb">
+                        <div class="orb-core"></div>
+                        <div class="orb-glow"></div>
+                        <div class="orb-ring orb-ring-1"></div>
+                        <div class="orb-ring orb-ring-2"></div>
+                    </div>
+                    
+                    <div class="audio-waveform-visualizer" id="waveform-visualizer">
+                        <div class="wave-bar bar-1"></div>
+                        <div class="wave-bar bar-2"></div>
+                        <div class="wave-bar bar-3"></div>
+                        <div class="wave-bar bar-4"></div>
+                        <div class="wave-bar bar-5"></div>
+                        <div class="wave-bar bar-6"></div>
+                        <div class="wave-bar bar-7"></div>
+                        <div class="wave-bar bar-8"></div>
+                    </div>
+
+                    <div class="orb-status" id="orb-status">Aura is Idle</div>
+                    <div class="orb-sub-status" id="orb-sub-status">Click the microphone button to speak</div>
+                </div>
+
+                <!-- Controls: Mic Action -->
+                <div class="voice-controls">
+                    <button class="mic-button" id="mic-btn" title="Start/Stop Voice Capture">
+                        <i data-lucide="mic" class="mic-icon"></i>
+                    </button>
+                    
+                    <div class="voice-settings">
+                        <label for="voice-selector">Voice Profile:</label>
+                        <select id="voice-selector" class="glass-select">
+                            <option value="female">Sonia (Female - UK)</option>
+                            <option value="male">Ryan (Male - UK)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Text Chat Input Fallback -->
+                <div class="chat-input-container">
+                    <input type="text" id="chat-input" placeholder="Type your message here... (or press Enter)" class="glass-input">
+                    <button class="send-button" id="send-btn" title="Send Message">
+                        <i data-lucide="send" class="send-icon"></i>
+                    </button>
+                </div>
+
+                <!-- Simulator Shortcuts (Critical for Interview Demos) -->
+                <div class="quick-simulation">
+                    <h4>Clinical Demo Shortcuts (Click to trigger)</h4>
+                    <div class="shortcuts-grid">
+                        <button class="shortcut-chip triage-chip" data-query="Help, I have sudden crushing chest pain and feel dizzy">
+                            <span class="chip-dot red"></span> Emergency Triage Test
+                        </button>
+                        <button class="shortcut-chip FAQ-chip" data-query="What time does the surgery close on Fridays?">
+                            <span class="chip-dot blue"></span> Surgery Hours RAG
+                        </button>
+                        <button class="shortcut-chip book-chip" data-query="I want to book a routine appointment with Dr. Jenkins">
+                            <span class="chip-dot purple"></span> Booking Slot Flow
+                        </button>
+                        <button class="shortcut-chip FAQ-chip" data-query="How do I register a new patient or request a repeat prescription?">
+                            <span class="chip-dot blue"></span> FAQs & Policies
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Transcript / Chat Area -->
+                <div class="conversation-transcript-container">
+                    <div class="transcript-header">
+                        <h3>Conversation Log</h3>
+                        <span class="transcript-clear" id="clear-log">Clear log</span>
+                    </div>
+                    <div class="transcript-body" id="transcript-body">
+                        <div class="message system-message">
+                            <i data-lucide="info" class="msg-icon"></i>
+                            <div class="msg-content">
+                                <p>System initialized. Welcome to the Aura GP Integration Sandbox. You can speak into your microphone or click the quick simulation buttons above to test RAG, scheduling, and critical safety features.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right Column: Observability & Telemetry -->
+            <section class="panel glass-panel telemetry-panel">
+                <div class="panel-header">
+                    <i data-lucide="bar-chart-3" class="panel-icon text-emerald"></i>
+                    <h2>MLOps & Observability</h2>
+                </div>
+
+                <!-- Clinical Safety Status -->
+                <div class="telemetry-card safety-card" id="safety-indicator">
+                    <div class="safety-label">
+                        <i data-lucide="shield-alert" class="safety-icon"></i>
+                        <span>Clinical Safety Gate</span>
+                    </div>
+                    <div class="safety-value" id="safety-status-val">SAFE</div>
+                </div>
+
+                <!-- Telemetry Stats -->
+                <div class="telemetry-stats">
+                    <h3>Pipeline Latency Breakdown</h3>
+                    
+                    <div class="metric-progress-group">
+                        <div class="metric-label">
+                            <span>Clinical Triage Scan</span>
+                            <span id="metric-triage-val">0 ms</span>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar" id="pb-triage" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <div class="metric-progress-group">
+                        <div class="metric-label">
+                            <span>Knowledge Base RAG Search</span>
+                            <span id="metric-rag-val">0 ms</span>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar" id="pb-rag" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <div class="metric-progress-group">
+                        <div class="metric-label">
+                            <span>LLM Reasoning & Dialogue</span>
+                            <span id="metric-llm-val">0 ms</span>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar" id="pb-llm" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <div class="metric-progress-group">
+                        <div class="metric-label">
+                            <span>Azure TTS Audio Generation</span>
+                            <span id="metric-tts-val">0 ms</span>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar" id="pb-tts" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <div class="metric-progress-group total-group">
+                        <div class="metric-label">
+                            <span>Total Agent Latency (RTT)</span>
+                            <span id="metric-total-val">0.0s</span>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar bg-primary" id="pb-total" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Compliance Tracker -->
+                <div class="compliance-controls">
+                    <h3>Privacy & DTAC Controls</h3>
+                    <div class="toggle-group">
+                        <div class="toggle-info">
+                            <h4>PII Anonymization</h4>
+                            <p>Scrub patient Names/DOBs from logs</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="pii-toggle" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="toggle-group">
+                        <div class="toggle-info">
+                            <h4>Transient Audio Streams</h4>
+                            <p>Automatically delete speech MP3s</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="audio-toggle" checked disabled>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Pipeline Log Stream -->
+                <div class="telemetry-logs">
+                    <h3>Real-time Log Stream</h3>
+                    <div class="log-stream-body" id="log-stream">
+                        <div class="log-entry log-system">System ready. Awaiting telemetry logs...</div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Script file -->
+    <script src="/static/app.js"></script>
+</body>
+</html>

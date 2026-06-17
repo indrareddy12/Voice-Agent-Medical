@@ -6,3 +6,5 @@ google-genai>=0.1.1
 openai>=1.14.0
 pydantic-settings>=2.2.1
 pydantic>=2.6.4
+langgraph>=1.2.4
+langchain-core>=1.4.6

@@ -6,3 +6,6 @@ __pycache__/
 .vscode/
 static/audio/*.mp3
 /backend/static/audio/*.mp3
+.env
+backend/.env
+*.db
